@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <title>Customer List</title>
+  <style>
+    table {
+      border: 1px solid #000;
+    }
+
+    th, td {
+      border: 1px dotted #555;
+    }
+  </style>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function () {
+      let deleteLink = $("a:contains('Delete')");
+      $(deleteLink).click(function (event) {
+        $.ajax({
+          url: $(event.target).attr("href"),
+          type: "DELETE",
+          beforeSend: function (xhr) {
+            xhr.setRequestHeader("Accept", "application/json");
+            xhr.setRequestHeader("Content-Type", "application/json");
+
+          },
+          success: function (c) {
+            let respContent = "";
+            let rowToDelete = $(event.target).closest("tr");
+            rowToDelete.remove();
+            respContent += "<span class='success'>User was deleted: [";
+            respContent += c.address + " : ";
+            respContent += c.name + " : ";
+            respContent += c.email + "]</span>";
+            $("#deleteCustomer").html(respContent);
+          }
+        });
+        event.preventDefault();
+      });
+    });
+  </script>
+</head>
+<body>
+<div sec:authorize="isAuthenticated()">
+  <span sec:authentication="principal.username"></span>, <a href="/logout">logout</a>.
+</div>
+<hr>
+<span th:if="${keyword}">
+  Search result for <code>"[[${keyword}]]"</code>, <a th:href="@{/customers}">click here to clear</a>.<br>
+</span>
+There are [[${customers.totalElements}]] customer(s).
+<form>
+  <label>
+    Search by name or email:
+    <input type="text" name="s">
+  </label>
+  <input type="submit" value="Search">
+</form>
+<div id="deleteCustomer"></div>
+<table>
+  <caption>Customers List</caption>
+  <thead>
+  <tr>
+    <th>Id</th>
+    <th>Name</th>
+    <th>Email</th>
+    <th>Address</th>
+    <th>Province</th>
+  </tr>
+  </thead>
+  <tbody>
+  <th:block th:each="c : ${customers}">
+    <tr>
+    <td th:text="${c.id}"></td>
+    <td>
+      <a th:href="@{/customers/info/{id}(id=${c.id})}" th:text="${c.name}"></a>
+    </td>
+    <td th:text="${c.email}"></td>
+    <td th:text="${c.address}"></td>
+    <td th:text="${c.province?.name}"></td>
+    <td><a th:href="@{/customers/__${c.id}__ }">Edit</a></td>
+    <td><a th:href="@{/customers/delete/__${c.id}__ }" th:value="Delete">Delete</a></td>
+    </tr>
+  </th:block>
+  </tbody>
+</table>
+<div>
+  <a th:if="${customers.hasPrevious()}"
+     th:href="@{'/customers'(page=${customers.number - 1}, size=${customers.size}, s=${keyword})}">
+    Previous
+  </a>
+  [[${customers.number + 1}]]/[[${customers.totalPages}]]
+  <a th:if="${customers.hasNext()}"
+     th:href="@{'/customers'(page=${customers.number + 1}, size=${customers.size}, s=${keyword})}">
+    Next
+  </a>
+</div>
+<hr>
+Language: <a href="?lang=en">English</a> | <a href="?lang=fr">French</a>
+</body>
+</html>
