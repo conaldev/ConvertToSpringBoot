@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-@CrossOrigin("*")
 @RequestMapping("customers")
 public class CustomerController {
     @Autowired
@@ -55,6 +54,7 @@ public class CustomerController {
 
     @GetMapping("/info/{id}")
     public ModelAndView showInformation(@PathVariable Long id) {
+        System.out.println("info coming");
         ModelAndView modelAndView = new ModelAndView("customers/info");
         Customer customer = customerService.findById(id);
         modelAndView.addObject("customer", customer);

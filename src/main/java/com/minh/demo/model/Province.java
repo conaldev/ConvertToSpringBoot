@@ -1,5 +1,6 @@
 package com.minh.demo.model;
 
+
 import javax.persistence.*;
 
 @Entity

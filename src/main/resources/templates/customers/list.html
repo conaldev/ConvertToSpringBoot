@@ -81,7 +81,6 @@ There are [[${customers.totalElements}]] customer(s).
     <td th:text="${c.email}"></td>
     <td th:text="${c.address}"></td>
     <td th:text="${c.province?.name}"></td>
-    <td><a th:href="@{/customers/__${c.id}__ }">Edit</a></td>
     <td><a th:href="@{/customers/delete/__${c.id}__ }" th:value="Delete">Delete</a></td>
     </tr>
   </th:block>

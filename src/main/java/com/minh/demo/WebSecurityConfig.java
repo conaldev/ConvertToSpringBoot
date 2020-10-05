@@ -21,12 +21,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().antMatchers("/customers/{id}/**").hasRole(Roles.STAFF)
+        http.authorizeRequests()
+                .antMatchers("/customers/{id}/**").hasRole(Roles.STAFF)
                 .and().authorizeRequests().antMatchers("/customers/**").authenticated()
                 .and().authorizeRequests().antMatchers("/**").permitAll()
                 .and().formLogin()
                 .and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 .and().csrf().disable();
+        ;
     }
 
     private interface Roles {
